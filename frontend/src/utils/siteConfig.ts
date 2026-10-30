@@ -20,3 +20,6 @@ export const CHURCH: ChurchInfo = {
     instagram: '',
   },
 }
+
+/** The parish's time zone: event times are entered and shown in this time, wherever the viewer is. */
+export const PARISH_TIME_ZONE = 'Africa/Lagos'

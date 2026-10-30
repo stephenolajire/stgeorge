@@ -106,6 +106,10 @@ export const adminRoutes: RouteObject = {
       lazy: async () => ({ Component: (await import('../pages/adminpage/AdminGallery')).default }),
     },
     {
+      path: ADMIN_PATHS.newsEvents,
+      lazy: async () => ({ Component: (await import('../pages/adminpage/AdminNewsEvents')).default }),
+    },
+    {
       path: ADMIN_PATHS.messages,
       lazy: async () => ({ Component: (await import('../pages/adminpage/AdminContactMessages')).default }),
     },
