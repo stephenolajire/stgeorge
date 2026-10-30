@@ -1,4 +1,4 @@
-import { BookOpen, CalendarDays, Church, Cross, HandHeart, Heart, Music, Users, type LucideIcon } from 'lucide-react'
+import { BookOpen, CalendarDays, Church, Cross, HandHeart, Heart, Music, Sprout, Users, type LucideIcon } from 'lucide-react'
 import type { HighlightIcon } from '../types/admin'
 
 /** Icons a highlight card can use. Keys match the server's HighlightIcon choices. */
@@ -11,4 +11,5 @@ export const HIGHLIGHT_ICONS: Record<HighlightIcon, { icon: LucideIcon; label: s
   cross: { icon: Cross, label: 'Cross' },
   music: { icon: Music, label: 'Music' },
   heart: { icon: Heart, label: 'Heart' },
+  sprout: { icon: Sprout, label: 'Growth' },
 }

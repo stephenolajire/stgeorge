@@ -25,7 +25,7 @@ export function useLiveUpdates() {
     let stopped = false
 
     // Topics that only change admin data (e.g. a new contact message); public visitors need not reload.
-    const ADMIN_ONLY_TOPICS = new Set(['contact-messages'])
+    const ADMIN_ONLY_TOPICS = new Set(['contact-messages', 'subscribers'])
     let adminOnly = true
 
     // Reload site content; the signed-in user ("auth") is not content.

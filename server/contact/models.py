@@ -119,6 +119,10 @@ class ContactPage(models.Model):
     banner_quote_source = models.CharField(max_length=100, blank=True)
     banner_image = models.ImageField(upload_to='contact/', blank=True, null=True, validators=IMAGE_VALIDATORS)
 
+    # Picture in the site footer (e.g. the patron saint), with a short caption.
+    footer_image = models.ImageField(upload_to='contact/', blank=True, null=True, validators=IMAGE_VALIDATORS)
+    footer_caption = models.CharField(max_length=100, blank=True, default='St. George, Pray for Us.')
+
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:

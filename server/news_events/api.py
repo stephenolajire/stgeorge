@@ -90,6 +90,17 @@ class EventViewSet(PostViewSet):
             queryset = queryset.order_by('-starts_at', '-id')
         return queryset
 
+    @action(detail=False, methods=['get'])
+    def next(self, request):
+        """
+        The event to show on the Home page: the soonest featured upcoming event, otherwise the soonest
+        upcoming one. Returns null when nothing is coming up.
+        """
+        start_of_today = timezone.localtime().replace(hour=0, minute=0, second=0, microsecond=0)
+        queryset = Event.objects.filter(is_published=True, starts_at__gte=start_of_today)
+        event = queryset.order_by('-is_featured', 'starts_at', 'id').first()
+        return Response(self.get_serializer(event).data if event else None)
+
 
 class NewsPostViewSet(PostViewSet):
     """News posts, newest first. GET /api/news/  ?status=  ?category=a,b  ?search=. Staff only for changes."""

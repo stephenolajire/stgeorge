@@ -12,3 +12,4 @@ class CardIcon(models.TextChoices):
     CROSS = 'cross', 'Cross'
     MUSIC = 'music', 'Music'
     HEART = 'heart', 'Heart'
+    SPROUT = 'sprout', 'Growth'

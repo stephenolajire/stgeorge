@@ -70,3 +70,16 @@ export function formatDay(iso: string) {
 
 /** Today in parish time, YYYY-MM-DD. */
 export const parishToday = () => parishParts(new Date().toISOString()).date
+
+const ordinal = (n: number) => {
+  const tens = n % 100
+  if (tens >= 11 && tens <= 13) return `${n}th`
+  return `${n}${({ 1: 'st', 2: 'nd', 3: 'rd' } as Record<number, string>)[n % 10] ?? 'th'}`
+}
+
+/** "Friday" and "30th October, 2026", in parish time. */
+export function longDateParts(iso: string) {
+  const at = new Date(iso)
+  const get = (options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('en-GB', { timeZone: PARISH_TIME_ZONE, ...options }).format(at)
+  return { weekday: get({ weekday: 'long' }), date: `${ordinal(Number(get({ day: 'numeric' })))} ${get({ month: 'long' })}, ${get({ year: 'numeric' })}` }
+}

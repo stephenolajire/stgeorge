@@ -84,19 +84,22 @@ PAGE_TEXT_FIELDS = (
     'hero_title', 'hero_subtitle', 'address', 'phone', 'phone_hours', 'email_note', 'office_days', 'office_hours',
     'form_title', 'form_subtitle', 'map_title', 'map_subtitle', 'map_query', 'directions',
     'faq_title', 'faq_subtitle', 'banner_title', 'banner_quote', 'banner_quote_source',
+    'footer_caption',
 )
 
 
 class ContactPageSerializer(ImageFieldsMixin, serializers.ModelSerializer):
-    image_fields = ('hero_image', 'banner_image')
+    image_fields = ('hero_image', 'banner_image', 'footer_image')
     remove_hero_image = serializers.BooleanField(write_only=True, required=False, default=False)
     remove_banner_image = serializers.BooleanField(write_only=True, required=False, default=False)
+    remove_footer_image = serializers.BooleanField(write_only=True, required=False, default=False)
     faqs = FAQSerializer(source='get_faqs', many=True, read_only=True)
 
     class Meta:
         model = ContactPage
         fields = [
             *PAGE_TEXT_FIELDS, 'email', 'hero_image', 'remove_hero_image', 'banner_image', 'remove_banner_image',
+            'footer_image', 'remove_footer_image',
             'faqs', 'updated_at',
         ]
         read_only_fields = ['updated_at']

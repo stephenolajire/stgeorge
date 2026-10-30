@@ -73,6 +73,8 @@ export interface ContactPageContent {
   map: { title: string; subtitle: string; query: string; directions: string }
   faq: { title: string; subtitle: string }
   banner: { title: string; quote: string; quoteSource: string; image: MediaImage | null }
+  /** Picture in the site footer, with a caption. */
+  footer: { caption: string; image: MediaImage | null }
   faqs: FAQ[]
 }
 
@@ -115,5 +117,7 @@ export interface ContactPageApi {
   banner_quote: string
   banner_quote_source: string
   banner_image: string | null
+  footer_caption: string
+  footer_image: string | null
   faqs: FAQ[]
 }

@@ -9,6 +9,7 @@ export const PUBLIC_PATHS = {
   sacraments: '/sacraments',
   newsEvents: '/news-events',
   gallery: '/gallery',
+  projects: '/projects',
   contact: '/contact',
   massTimes: '/mass-times',
   privacy: '/privacy-policy',
@@ -22,6 +23,7 @@ export const publicNavItems = [
   { label: 'Sacraments', path: PUBLIC_PATHS.sacraments },
   { label: 'News & Events', path: PUBLIC_PATHS.newsEvents },
   { label: 'Gallery', path: PUBLIC_PATHS.gallery },
+  { label: 'Projects', path: PUBLIC_PATHS.projects },
   { label: 'Contact', path: PUBLIC_PATHS.contact },
 ]
 
@@ -52,6 +54,10 @@ export const publicRoutes: RouteObject = {
       lazy: async () => ({ Component: (await import('../pages/publicpage/Sacraments')).default }),
     },
     {
+      path: PUBLIC_PATHS.projects,
+      lazy: async () => ({ Component: (await import('../pages/publicpage/Projects')).default }),
+    },
+    {
       path: PUBLIC_PATHS.newsEvents,
       lazy: async () => ({ Component: (await import('../pages/publicpage/NewsEvents')).default }),
     },
@@ -59,11 +65,11 @@ export const publicRoutes: RouteObject = {
       path: PUBLIC_PATHS.parishLife,
       lazy: async () => ({ Component: (await import('../pages/publicpage/ParishLife')).default }),
     },
-    // Pages not built yet (including Home for now).
     {
       index: true,
-      lazy: async () => ({ Component: (await import('../components/public/PublicPlaceholder')).default }),
+      lazy: async () => ({ Component: (await import('../pages/publicpage/Home')).default }),
     },
+    // Pages not built yet.
     {
       path: '*',
       lazy: async () => ({ Component: (await import('../components/public/PublicPlaceholder')).default }),

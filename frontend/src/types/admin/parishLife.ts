@@ -1,6 +1,6 @@
 import type { AboutHero, MediaImage } from './about'
 
-export type HighlightIcon = 'church' | 'users' | 'book' | 'hands' | 'calendar' | 'cross' | 'music' | 'heart'
+export type HighlightIcon = 'church' | 'users' | 'book' | 'hands' | 'calendar' | 'cross' | 'music' | 'heart' | 'sprout'
 
 /** A small card in the strip under the banner. */
 export interface Highlight {

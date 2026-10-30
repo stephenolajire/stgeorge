@@ -1,10 +1,12 @@
 import {
   CalendarDays,
   Clock,
+  FolderKanban,
   House,
   Image,
   Mail,
   Megaphone,
+  PanelsTopLeft,
   Settings,
   User,
   Users,
@@ -21,11 +23,13 @@ export const ADMIN_BASE = '/admin'
 export const ADMIN_PATHS = {
   dashboard: ADMIN_BASE,
   login: `${ADMIN_BASE}/login`,
+  home: `${ADMIN_BASE}/home`,
   about: `${ADMIN_BASE}/about`,
   parishLife: `${ADMIN_BASE}/parish-life`,
   sacraments: `${ADMIN_BASE}/sacraments`,
   newsEvents: `${ADMIN_BASE}/news-events`,
   gallery: `${ADMIN_BASE}/gallery`,
+  projects: `${ADMIN_BASE}/projects`,
   massTimes: `${ADMIN_BASE}/mass-times`,
   announcements: `${ADMIN_BASE}/announcements`,
   messages: `${ADMIN_BASE}/messages`,
@@ -41,11 +45,13 @@ export const adminNavSections: NavSection[] = [
   {
     title: 'Content Management',
     items: [
+      { label: 'Home Page', path: ADMIN_PATHS.home, icon: PanelsTopLeft },
       { label: 'About', path: ADMIN_PATHS.about, icon: UsersRound },
       { label: 'Parish Life', path: ADMIN_PATHS.parishLife, icon: UsersRound },
       { label: 'Sacraments', path: ADMIN_PATHS.sacraments, icon: Wine },
       { label: 'News & Events', path: ADMIN_PATHS.newsEvents, icon: CalendarDays },
       { label: 'Gallery', path: ADMIN_PATHS.gallery, icon: Image },
+      { label: 'Projects', path: ADMIN_PATHS.projects, icon: FolderKanban },
     ],
   },
   {
@@ -90,6 +96,10 @@ export const adminRoutes: RouteObject = {
       lazy: async () => ({ Component: (await import('../pages/adminpage/AdminDashboard')).default }),
     },
     {
+      path: ADMIN_PATHS.home,
+      lazy: async () => ({ Component: (await import('../pages/adminpage/AdminHome')).default }),
+    },
+    {
       path: ADMIN_PATHS.about,
       lazy: async () => ({ Component: (await import('../pages/adminpage/AdminAbout')).default }),
     },
@@ -104,6 +114,10 @@ export const adminRoutes: RouteObject = {
     {
       path: ADMIN_PATHS.gallery,
       lazy: async () => ({ Component: (await import('../pages/adminpage/AdminGallery')).default }),
+    },
+    {
+      path: ADMIN_PATHS.projects,
+      lazy: async () => ({ Component: (await import('../pages/adminpage/AdminProjects')).default }),
     },
     {
       path: ADMIN_PATHS.newsEvents,

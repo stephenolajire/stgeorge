@@ -53,6 +53,8 @@ INSTALLED_APPS = [
     'gallery',
     'contact',
     'news_events',
+    'home',
+    'projects',
     'realtime',
 ]
 
@@ -195,6 +197,8 @@ REST_FRAMEWORK = {
         'login': '10/minute',
         # Contact form messages per visitor.
         'contact': '5/hour',
+        # Newsletter sign-ups per visitor.
+        'subscribe': '5/hour',
     },
 }
 

@@ -50,6 +50,7 @@ function pageFromApi(d: ContactPageApi): ContactPageContent {
     map: { title: d.map_title, subtitle: d.map_subtitle, query: d.map_query, directions: d.directions },
     faq: { title: d.faq_title, subtitle: d.faq_subtitle },
     banner: { title: d.banner_title, quote: d.banner_quote, quoteSource: d.banner_quote_source, image: toImage(d.banner_image) },
+    footer: { caption: d.footer_caption, image: toImage(d.footer_image) },
     faqs: d.faqs,
   }
 }
@@ -115,10 +116,12 @@ export const contactService = {
       banner_title: c.banner.title,
       banner_quote: c.banner.quote,
       banner_quote_source: c.banner.quoteSource,
+      footer_caption: c.footer.caption,
     }
     Object.entries(fields).forEach(([k, v]) => form.append(k, v))
     appendImage(form, 'hero_image', c.hero.image)
     appendImage(form, 'banner_image', c.banner.image)
+    appendImage(form, 'footer_image', c.footer.image)
     return pageFromApi((await api.patch<ContactPageApi>(PAGE_URL, form)).data)
   },
 

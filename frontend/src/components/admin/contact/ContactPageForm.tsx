@@ -1,4 +1,4 @@
-import { ContactRound, Map, Quote } from 'lucide-react'
+import { ContactRound, Image as ImageIcon, Map, Quote } from 'lucide-react'
 import { useState, type FormEvent } from 'react'
 import { toast } from 'react-toastify'
 import { useUpdateContactPage } from '../../../hooks/admin/contactHook'
@@ -23,6 +23,7 @@ export default function ContactPageForm({ content }: { content: ContactPageConte
   const [map, setMap] = useState(content.map)
   const [faq, setFaq] = useState(content.faq)
   const [banner, setBanner] = useState(content.banner)
+  const [footer, setFooter] = useState(content.footer)
   const { mutate: save } = useUpdateContactPage()
 
   const d = <K extends keyof typeof details>(key: K) => (value: string) => setDetails({ ...details, [key]: value })
@@ -30,11 +31,12 @@ export default function ContactPageForm({ content }: { content: ContactPageConte
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault()
     save(
-      { hero, details, form: formText, map, faq, banner },
+      { hero, details, form: formText, map, faq, banner, footer },
       {
         onSuccess: (saved) => {
           setHero((h) => ({ ...h, image: saved.hero.image }))
           setBanner((b) => ({ ...b, image: saved.banner.image }))
+          setFooter((f) => ({ ...f, image: saved.footer.image }))
           toast.success('Contact page saved')
         },
         onError: (error) => toast.error(getErrorMessage(error, 'Could not save the page. Please try again.')),
@@ -101,6 +103,17 @@ export default function ContactPageForm({ content }: { content: ContactPageConte
         </form>
 
         <FaqEditor faqs={content.faqs} />
+
+        <form onSubmit={handleSubmit} noValidate>
+          <div id="footer" className="scroll-mt-20">
+            <SectionCard title="Footer Picture" subtitle="Shown on the right of the footer on every page, e.g. a picture of St. George." icon={ImageIcon} serif>
+              <div className="grid gap-5 lg:grid-cols-[3fr_2fr]">
+                <FormField label="Caption" value={footer.caption} onChange={(caption) => setFooter({ ...footer, caption })} maxLength={100} />
+                <ImagePickerField label="Picture" value={footer.image} onChange={(image) => setFooter({ ...footer, image })} className="h-44" />
+              </div>
+            </SectionCard>
+          </div>
+        </form>
       </div>
 
       <div className="xl:sticky xl:top-22 xl:self-start">
@@ -112,6 +125,7 @@ export default function ContactPageForm({ content }: { content: ContactPageConte
             { id: 'form-map', label: 'Form & Map' },
             { id: 'banner', label: 'Side Banner' },
             { id: 'faqs', label: 'Quick Questions', note: `${content.faqs.length} cards` },
+            { id: 'footer', label: 'Footer Picture' },
           ]}
         />
         <p className="mt-3 px-1 text-xs leading-relaxed text-muted">Questions are saved as soon as you add or edit them; use “Save Changes” for everything else.</p>

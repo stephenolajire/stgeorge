@@ -4,6 +4,8 @@ export interface TabItem<T extends string> {
   value: T
   label: string
   icon?: LucideIcon
+  /** Colour class for a small dot before the label, e.g. "bg-success". */
+  dot?: string
 }
 
 interface TabsProps<T extends string> {
@@ -19,7 +21,7 @@ interface TabsProps<T extends string> {
 export default function Tabs<T extends string>({ value, onChange, items, label, compact }: TabsProps<T>) {
   return (
     <div role="tablist" aria-label={label} className="flex gap-1 overflow-x-auto border-b border-line">
-      {items.map(({ value: tab, label: text, icon: Icon }) => {
+      {items.map(({ value: tab, label: text, icon: Icon, dot }) => {
         const active = tab === value
         return (
           <button
@@ -35,6 +37,7 @@ export default function Tabs<T extends string>({ value, onChange, items, label, 
             }`}
           >
             {Icon && <Icon className={compact ? 'size-4' : 'size-4.5'} />}
+            {dot && <span className={`size-2 rounded-full ${dot}`} aria-hidden />}
             {text}
           </button>
         )

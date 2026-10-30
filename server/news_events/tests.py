@@ -107,3 +107,14 @@ class NewsEventsApiTests(APITestCase):
         self.client.force_authenticate(self.staff)
         self.assertEqual(self.client.patch(reverse('news-events-page'), {'cta_title': ' Join '}, format='json').data['cta_title'], 'Join')
         self.assertEqual(NewsEventsPage.objects.count(), 1)
+
+    def test_next_event_prefers_featured_then_soonest(self):
+        url = reverse('events-next')
+        self.assertIsNone(self.client.get(url).data)
+        event('Soon', 2)
+        event('Later', 9, is_featured=True)
+        event('Hidden', 1, is_featured=True, is_published=False)
+        event('Past', -3, is_featured=True)
+        self.assertEqual(self.client.get(url).data['title'], 'Later')
+        Event.objects.filter(title='Later').update(is_featured=False)
+        self.assertEqual(self.client.get(url).data['title'], 'Soon')

@@ -22,6 +22,8 @@ export default function PublicFooter() {
   // Address, phone, email and hours are edited on the admin Contact page.
   const { data: page } = useContactContent()
   const details = page?.details
+  // Optional picture on the right, e.g. St. George (also set on the admin Contact page).
+  const footerImage = page?.footer.image
   const contact = details
     ? {
         address: details.address,
@@ -38,7 +40,9 @@ export default function PublicFooter() {
 
   return (
     <footer className="bg-surface">
-      <div className="container-public grid gap-10 py-10 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1.3fr]">
+      <div
+        className={`container-public grid gap-10 py-10 sm:grid-cols-2 ${footerImage ? 'lg:grid-cols-[1.4fr_1fr_1.3fr_auto]' : 'lg:grid-cols-[1.4fr_1fr_1.3fr]'}`}
+      >
         <div>
           <Link to={PUBLIC_PATHS.home} className="flex items-center gap-3">
             {CHURCH.logoUrl ? (
@@ -100,6 +104,13 @@ export default function PublicFooter() {
             {contact.hours && <ContactLine icon={Clock}>{contact.hours}</ContactLine>}
           </ul>
         </div>
+
+        {footerImage && (
+          <figure className="text-center sm:justify-self-start lg:justify-self-end">
+            <img src={footerImage.url} alt={page?.footer.caption || ''} className="mx-auto h-36 w-32 rounded-md object-cover shadow-card" />
+            {page?.footer.caption && <figcaption className="mx-auto mt-2 max-w-32 text-sm leading-snug text-ink-soft">{page.footer.caption}</figcaption>}
+          </figure>
+        )}
       </div>
 
       <div className="bg-primary">
