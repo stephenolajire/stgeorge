@@ -4,4 +4,4 @@ import type { NavBadges } from '../../types/admin'
 
 export const navBadgesMock: NavBadges = { unreadMessages: 3 }
 
-export const unreadNotificationsMock = 5
+export const unreadNotificationsMock = 3

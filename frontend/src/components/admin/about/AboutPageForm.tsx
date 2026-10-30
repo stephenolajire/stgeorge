@@ -9,10 +9,12 @@ import { getErrorMessage } from '../../../utils/apiError'
 import Button from '../common/Button'
 import PageHeader from '../common/PageHeader'
 import HeroSectionEditor from './HeroSectionEditor'
+import HistoryEditor from './HistoryEditor'
 import KeyStatistics from './KeyStatistics'
 import MainContentEditor from './MainContentEditor'
 import MissionVisionEditor from './MissionVisionEditor'
 import ParishInfoCard from './ParishInfoCard'
+import ValuesPatronEditor from './ValuesPatronEditor'
 
 /** The About page editor. Mounted once the saved content has loaded. */
 export default function AboutPageForm({ initialContent }: { initialContent: AboutPageContent }) {
@@ -42,6 +44,7 @@ export default function AboutPageForm({ initialContent }: { initialContent: Abou
           ...prev,
           hero: { ...prev.hero, image: saved.hero.image },
           mainContent: { ...prev.mainContent, image: saved.mainContent.image },
+          history: { ...prev.history, image: saved.history.image },
         }))
         toast.success('About page saved')
       },
@@ -71,6 +74,13 @@ export default function AboutPageForm({ initialContent }: { initialContent: Abou
             onMissionChange={(mission) => update('mission', mission)}
             onVisionChange={(vision) => update('vision', vision)}
           />
+          <ValuesPatronEditor
+            coreValues={content.coreValues}
+            patron={content.patron}
+            onCoreValuesChange={(coreValues) => update('coreValues', coreValues)}
+            onPatronChange={(patron) => update('patron', patron)}
+          />
+          <HistoryEditor value={content.history} onChange={(history) => update('history', history)} />
         </div>
         <div className="space-y-4">
           <ParishInfoCard value={content.parishInfo} onChange={(info) => update('parishInfo', info)} />

@@ -1,5 +1,5 @@
 import { CalendarDays, ExternalLink } from 'lucide-react'
-import { PUBLIC_PATHS } from '../../../routes/adminRoute'
+import { PUBLIC_PATHS } from '../../../routes/publicRoute'
 import type { ChurchInfo } from '../../../types/admin'
 import { formatLongDate } from '../../../utils/format'
 

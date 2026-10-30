@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/', include('user.urls')),
     path('api/', include('about.urls')),
     path('api/', include('clergy_staff.urls')),
+    path('api/', include('parish_life.urls')),
 ]
 
 if settings.DEBUG:

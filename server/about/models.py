@@ -17,6 +17,27 @@ DEFAULT_CONTENT = {
         'A vibrant, united parish where all are welcomed, nurtured in faith, and empowered '
         'to be disciples of Christ in our homes, community and beyond.'
     ),
+    'core_values': '\n'.join(
+        [
+            'Faith in Christ',
+            'Prayer and Worship',
+            'Love and Service',
+            'Unity and Community',
+            'Integrity and Stewardship',
+        ]
+    ),
+    'patron': (
+        'St. George the Martyr, a witness of unwavering faith and courage. His example inspires us '
+        'to stand firm in our faith and to serve God and humanity with boldness and love.'
+    ),
+    'history_title': 'A Journey of Faith',
+    'history': (
+        'St. George Catholic Church, Ofatedo, has been a centre of worship, evangelisation and '
+        'community life for many years in the Catholic Diocese of Osogbo.\n\n'
+        'From humble beginnings, our parish has grown into a vibrant community, united by faith and '
+        'a shared commitment to living out the teachings of Christ. Through the dedication of our '
+        'priests, religious, and lay faithful, the parish continues to flourish as a home for all.'
+    ),
     'established': '1998',
     'diocese': 'Catholic Diocese of Osogbo',
     'parish_priest': '',
@@ -41,6 +62,15 @@ class AboutPage(models.Model):
     # Mission & vision
     mission = models.TextField(blank=True)
     vision = models.TextField(blank=True)
+
+    # Core values & patron
+    core_values = models.TextField(blank=True, help_text='One value per line.')
+    patron = models.TextField('our patron', blank=True)
+
+    # History ("Our History" section)
+    history_title = models.CharField(max_length=150, blank=True)
+    history = models.TextField(blank=True, help_text='Leave a blank line between paragraphs.')
+    history_image = models.ImageField(upload_to='about/', blank=True, null=True)
 
     # Parish information
     established = models.CharField(

@@ -118,3 +118,44 @@ class AboutAdminTests(APITestCase):
         page = self.client.get(response['Location'])
         self.assertContains(page, 'Hero section')
         self.assertContains(page, 'No image')
+
+
+@override_settings(MEDIA_ROOT=MEDIA_ROOT)
+class HistoryValuesPatronTests(APITestCase):
+    url = reverse('about-page')
+
+    def setUp(self):
+        self.client.force_authenticate(
+            get_user_model().objects.create_user('admin@example.com', password='pass', is_staff=True)
+        )
+
+    def test_defaults_are_filled(self):
+        data = self.client.get(self.url).data
+        self.assertEqual(data['history_title'], 'A Journey of Faith')
+        self.assertIn('Faith in Christ', data['core_values'].splitlines())
+        self.assertTrue(data['patron'].startswith('St. George the Martyr'))
+        self.assertIsNone(data['history_image'])
+
+    def test_update_text_and_tidy_core_values(self):
+        response = self.client.patch(
+            self.url,
+            {
+                'core_values': '  Faith  \n\n Hope\n   \nCharity ',
+                'patron': 'St. George',
+                'history_title': 'Our Story',
+                'history': 'Founded long ago.\n\nStill growing.',
+            },
+            format='json',
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['core_values'], 'Faith\nHope\nCharity')
+        self.assertEqual(response.data['history'], 'Founded long ago.\n\nStill growing.')
+        self.assertEqual(response.data['history_title'], 'Our Story')
+
+    def test_history_image_upload_and_remove(self):
+        response = self.client.patch(self.url, {'history_image': make_image('h.png')}, format='multipart')
+        self.assertIn('/media/about/', response.data['history_image'])
+        name = AboutPage.load().history_image.name
+        response = self.client.patch(self.url, {'remove_history_image': 'true'}, format='multipart')
+        self.assertIsNone(response.data['history_image'])
+        self.assertFalse(AboutPage._meta.get_field('history_image').storage.exists(name))

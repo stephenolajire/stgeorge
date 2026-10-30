@@ -1,6 +1,7 @@
 import io
 import shutil
 import tempfile
+from unittest import mock
 
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -54,8 +55,10 @@ class MemberApiTests(APITestCase):
     def test_public_sees_only_active_and_cannot_write(self):
         member('Visible')
         member('Hidden', is_active=False)
-        response = self.client.get(LIST, {'status': 'inactive'})
+        response = self.client.get(LIST)
         self.assertEqual([m['full_name'] for m in response.data['results']], ['Visible'])
+        # Asking for inactive members does not reveal them.
+        self.assertEqual(self.client.get(LIST, {'status': 'inactive'}).data['count'], 0)
         self.assertEqual(self.client.post(LIST, {}).status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(self.client.get(reverse('clergy-staff-summary')).status_code, status.HTTP_401_UNAUTHORIZED)
 
@@ -83,6 +86,14 @@ class MemberApiTests(APITestCase):
         data = self.client.get(reverse('clergy-staff-summary')).data
         self.assertEqual(data['counts'], {'all': 3, 'clergy': 1, 'religious': 1, 'staff': 1, 'inactive': 1})
         self.assertIn({'value': 'parish_priest', 'label': 'Parish Priest', 'category': 'clergy'}, data['roles'])
+        self.assertEqual(data['roles'][0], {'value': 'bishop', 'label': 'Bishop', 'category': 'clergy'})
+
+    def test_bishop_is_clergy(self):
+        self.client.force_authenticate(self.staff)
+        response = self.client.post(LIST, {'full_name': 'Most Rev. A', 'role': 'bishop', 'short_bio': 'Bishop'}, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.data['category'], 'clergy')
+        self.assertEqual(response.data['role_label'], 'Bishop')
 
     def test_create_update_with_photo_and_delete(self):
         self.client.force_authenticate(self.staff)
@@ -119,23 +130,40 @@ class MemberApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('photo', response.data)
 
-        with self.settings(), self.subTest('size'):
-            from core import validators
-
-            original = validators.MAX_PHOTO_SIZE
-            validators.MAX_PHOTO_SIZE = 10
-            try:
-                response = self.client.post(
-                    LIST, {'full_name': 'X', 'role': 'chaplain', 'short_bio': 'X', 'photo': make_photo()}, format='multipart'
-                )
-            finally:
-                validators.MAX_PHOTO_SIZE = original
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        with mock.patch('core.validators.MAX_PHOTO_SIZE', 10):
+            response = self.client.post(
+                LIST, {'full_name': 'X', 'role': 'chaplain', 'short_bio': 'X', 'photo': make_photo()}, format='multipart'
+            )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('2 MB', str(response.data['photo']))
 
     def test_required_fields_and_invalid_role(self):
         self.client.force_authenticate(self.staff)
         response = self.client.post(LIST, {'role': 'pope'}, format='json')
         self.assertEqual(set(response.data), {'full_name', 'role', 'short_bio'})
+
+    def test_public_can_filter_but_only_sees_active(self):
+        member('Sister Active', role='religious_sister')
+        member('Sister Away', role='religious_sister', is_active=False)
+        member('Priest')
+        names = [m['full_name'] for m in self.client.get(LIST, {'category': 'religious'}).data['results']]
+        self.assertEqual(names, ['Sister Active'])
+
+    def test_leadership_order_and_skips(self):
+        url = reverse('clergy-staff-leadership')
+        member('Assistant', role='assistant_parish_priest')
+        member('Bishop', role='bishop')
+        member('Old PP', role='parish_priest', is_active=False)
+        member('Parish Priest', role='parish_priest')
+        member('Second Assistant', role='assistant_parish_priest')
+        member('Chaplain', role='chaplain')
+
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual([m['full_name'] for m in response.data], ['Parish Priest', 'Bishop', 'Assistant'])
+
+        Member.objects.filter(role='bishop').delete()
+        self.assertEqual([m['full_name'] for m in self.client.get(url).data], ['Parish Priest', 'Assistant'])
 
     def test_reorder(self):
         self.client.force_authenticate(self.staff)
@@ -147,3 +175,5 @@ class MemberApiTests(APITestCase):
 
         bad = self.client.post(reverse('clergy-staff-reorder'), {'ids': [a.id, 9999]}, format='json')
         self.assertEqual(bad.status_code, status.HTTP_400_BAD_REQUEST)
+        dup = self.client.post(reverse('clergy-staff-reorder'), {'ids': [a.id, a.id]}, format='json')
+        self.assertEqual(dup.status_code, status.HTTP_400_BAD_REQUEST)

@@ -18,6 +18,13 @@ export interface AboutMainContent {
   image: MediaImage | null
 }
 
+export interface AboutHistory {
+  title: string
+  /** Plain text; a blank line starts a new paragraph. */
+  text: string
+  image: MediaImage | null
+}
+
 export interface ParishInformation {
   established: string
   diocese: string
@@ -32,6 +39,10 @@ export interface AboutPageContent {
   mission: string
   /** Plain text */
   vision: string
+  /** One value per line. */
+  coreValues: string
+  patron: string
+  history: AboutHistory
   parishInfo: ParishInformation
 }
 
@@ -56,6 +67,11 @@ export interface AboutPageApi {
   main_image: string | null
   mission: string
   vision: string
+  core_values: string
+  patron: string
+  history_title: string
+  history: string
+  history_image: string | null
   established: string
   diocese: string
   parish_priest: string

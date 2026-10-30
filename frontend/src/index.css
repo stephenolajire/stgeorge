@@ -50,6 +50,11 @@
   --color-neutral: #1e2a4a;
   --color-neutral-soft: #edf1f9;
 
+  /* Public site */
+  --color-gold: #b3862a;
+  --color-cream: #faf6ee;
+  --color-mist: #f3f6fb;
+
   /* Forms */
   --color-field-border: #e2e6ee;
 
@@ -62,11 +67,29 @@
   --shadow-raised: 0 8px 24px -6px rgb(16 24 40 / 0.12);
 
   /* Layout */
+  /* Widest the public pages' content gets; change this to make them wider or narrower. */
+  --container-public: 90rem;
   --spacing-sidebar: 16.5rem;
   --spacing-topbar: 4.25rem;
 }
 
 /* Reusable component-level utilities built from the tokens above. */
+
+/* Centred content column for the public pages. Side padding grows a little on bigger screens. */
+@utility container-public {
+  width: 100%;
+  max-width: var(--container-public);
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 3.5vw, 3rem);
+}
+
+/* Same, slightly wider: for full-bleed cards like the mission strip. */
+@utility container-public-wide {
+  width: 100%;
+  max-width: calc(var(--container-public) + 3rem);
+  margin-inline: auto;
+  padding-inline: clamp(0.75rem, 2vw, 1.5rem);
+}
 @utility card {
   background-color: var(--color-surface);
   border: 1px solid #f0f2f7;
@@ -125,11 +148,11 @@
 @utility form-textarea {
   display: block;
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.625rem 0.75rem;
   border: 1px solid var(--color-field-border);
   border-radius: 0.375rem;
   background-color: var(--color-surface);
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   line-height: 1.6;
   color: var(--color-ink-soft);
   resize: vertical;

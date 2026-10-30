@@ -1,18 +1,20 @@
-import html
-import re
-
-from django.utils.html import strip_tags
 from rest_framework import serializers
+
+from core.text import to_plain_text
 
 from .models import AboutPage
 
-IMAGE_FIELDS = ('hero_image', 'main_image')
+IMAGE_FIELDS = ('hero_image', 'main_image', 'history_image')
 TEXT_FIELDS = (
     'hero_title',
     'hero_subtitle',
     'description',
     'mission',
     'vision',
+    'core_values',
+    'patron',
+    'history_title',
+    'history',
     'established',
     'diocese',
     'parish_priest',
@@ -20,19 +22,11 @@ TEXT_FIELDS = (
 )
 
 
-def to_plain_text(value):
-    """Remove any HTML so only plain text is stored. Paragraph and line breaks are kept."""
-    if '<' not in value:
-        return value.strip()
-    value = re.sub(r'(?i)<br\s*/?>', '\n', value)
-    value = re.sub(r'(?i)</p>\s*<p[^>]*>', '\n\n', value)
-    return html.unescape(strip_tags(value)).strip()
-
-
 class AboutPageSerializer(serializers.ModelSerializer):
     # Multipart forms cannot send "null" for a file, so removal is an explicit flag.
     remove_hero_image = serializers.BooleanField(write_only=True, required=False, default=False)
     remove_main_image = serializers.BooleanField(write_only=True, required=False, default=False)
+    remove_history_image = serializers.BooleanField(write_only=True, required=False, default=False)
 
     class Meta:
         model = AboutPage
@@ -46,6 +40,12 @@ class AboutPageSerializer(serializers.ModelSerializer):
             'remove_main_image',
             'mission',
             'vision',
+            'core_values',
+            'patron',
+            'history_title',
+            'history',
+            'history_image',
+            'remove_history_image',
             'established',
             'diocese',
             'parish_priest',
@@ -58,6 +58,10 @@ class AboutPageSerializer(serializers.ModelSerializer):
         for field in TEXT_FIELDS:
             if field in attrs:
                 attrs[field] = to_plain_text(attrs[field])
+        if 'core_values' in attrs:
+            # One value per line: drop empty lines and stray spaces.
+            lines = (line.strip() for line in attrs['core_values'].splitlines())
+            attrs['core_values'] = '\n'.join(line for line in lines if line)
         return attrs
 
     def update(self, instance, validated_data):

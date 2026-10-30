@@ -22,5 +22,8 @@ export type NavBadges = Partial<Record<NavBadgeKey, number>>
 export interface ChurchInfo {
   name: string
   location: string
+  diocese: string
+  /** Shown as "Learn More About Our Diocese" on the About page; hidden when empty. */
+  dioceseWebsite: string
   logoUrl?: string
 }

@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'user',
     'about',
     'clergy_staff',
+    'parish_life',
 ]
 
 MIDDLEWARE = [

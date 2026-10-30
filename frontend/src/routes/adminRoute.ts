@@ -46,12 +46,6 @@ export const ADMIN_PATHS = {
   backup: `${ADMIN_BASE}/backup`,
 } as const
 
-/** Public website paths, used by the "View Website" / "View Page" buttons. */
-export const PUBLIC_PATHS = {
-  home: '/',
-  about: '/about',
-} as const
-
 export const adminNavSections: NavSection[] = [
   {
     items: [{ label: 'Dashboard', path: ADMIN_PATHS.dashboard, icon: House, end: true }],
@@ -122,6 +116,10 @@ export const adminRoutes: RouteObject = {
     {
       path: ADMIN_PATHS.about,
       lazy: async () => ({ Component: (await import('../pages/adminpage/AdminAbout')).default }),
+    },
+    {
+      path: ADMIN_PATHS.clergy,
+      lazy: async () => ({ Component: (await import('../pages/adminpage/AdminClergyStaff')).default }),
     },
     
     {

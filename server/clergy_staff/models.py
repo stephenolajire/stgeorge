@@ -1,5 +1,7 @@
 from django.db import models
+
 from core.validators import validate_photo_extension, validate_photo_size
+
 
 class Category(models.TextChoices):
     CLERGY = 'clergy', 'Clergy'
@@ -8,6 +10,7 @@ class Category(models.TextChoices):
 
 
 class Role(models.TextChoices):
+    BISHOP = 'bishop', 'Bishop'
     PARISH_PRIEST = 'parish_priest', 'Parish Priest'
     ASSISTANT_PARISH_PRIEST = 'assistant_parish_priest', 'Assistant Parish Priest'
     RESIDENT_PRIEST = 'resident_priest', 'Resident Priest'
@@ -24,6 +27,7 @@ class Role(models.TextChoices):
 
 # Each role belongs to one category, which drives the tabs and the role badge.
 ROLE_CATEGORY = {
+    Role.BISHOP: Category.CLERGY,
     Role.PARISH_PRIEST: Category.CLERGY,
     Role.ASSISTANT_PARISH_PRIEST: Category.CLERGY,
     Role.RESIDENT_PRIEST: Category.CLERGY,

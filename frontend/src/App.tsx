@@ -1,14 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { Navigate, RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
-import { ADMIN_PATHS, adminLoginRoute, adminRoutes } from './routes/adminRoute'
+import { adminLoginRoute, adminRoutes } from './routes/adminRoute'
+import { publicRoutes } from './routes/publicRoute'
 
-const router = createBrowserRouter([
-  // Temporary: send "/" to the admin until the public pages are built.
-  { path: '/', element: <Navigate to={ADMIN_PATHS.dashboard} replace /> },
-  adminLoginRoute,
-  adminRoutes,
-])
+const router = createBrowserRouter([publicRoutes, adminLoginRoute, adminRoutes])
 
 const queryClient = new QueryClient({
   defaultOptions: {

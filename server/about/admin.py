@@ -10,11 +10,13 @@ from .models import AboutPage
 class AboutPageAdmin(admin.ModelAdmin):
     """The About page is a single record: the admin opens its edit form directly."""
 
-    readonly_fields = ['hero_image_preview', 'main_image_preview', 'updated_at']
+    readonly_fields = ['hero_image_preview', 'main_image_preview', 'history_image_preview', 'updated_at']
     fieldsets = (
         ('Hero section', {'fields': ('hero_title', 'hero_subtitle', 'hero_image', 'hero_image_preview')}),
         ('Main content', {'fields': ('description', 'main_image', 'main_image_preview')}),
         ('Mission & vision', {'fields': ('mission', 'vision')}),
+        ('Core values & patron', {'fields': ('core_values', 'patron')}),
+        ('History', {'fields': ('history_title', 'history', 'history_image', 'history_image_preview')}),
         ('Parish information', {'fields': ('established', 'diocese', 'parish_priest', 'location')}),
         (None, {'fields': ('updated_at',)}),
     )
@@ -37,6 +39,10 @@ class AboutPageAdmin(admin.ModelAdmin):
     @admin.display(description='Current main image')
     def main_image_preview(self, obj):
         return self._preview(obj.main_image)
+
+    @admin.display(description='Current history image')
+    def history_image_preview(self, obj):
+        return self._preview(obj.history_image)
 
     @staticmethod
     def _preview(image):

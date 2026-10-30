@@ -3,12 +3,15 @@ from django.db.models import Count, Q
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from core.permissions import IsAdminOrReadOnly
 
 from .models import ROLE_CATEGORY, Member, Role
+
+# The "Priests of Our Parish" section on the public About page, in display order.
+LEADERSHIP_ROLES = [Role.PARISH_PRIEST, Role.BISHOP, Role.ASSISTANT_PARISH_PRIEST]
 from .serializers import MemberSerializer, ReorderSerializer
 
 
@@ -30,6 +33,7 @@ class MemberViewSet(viewsets.ModelViewSet):
     DELETE /api/clergy-staff/<id>/       delete (staff only)
     GET    /api/clergy-staff/summary/    counts per tab and the list of roles (staff only)
     POST   /api/clergy-staff/reorder/    {ids: [...]} in the new display order (staff only)
+    GET    /api/clergy-staff/leadership/ parish priest, bishop, assistant parish priest (public)
 
     The public only sees active members.
     """
@@ -45,8 +49,9 @@ class MemberViewSet(viewsets.ModelViewSet):
         queryset = Member.objects.all()
         params = self.request.query_params
 
+        # The public only ever sees active members; staff can filter by status.
         if not self.request.user.is_staff:
-            return queryset.filter(is_active=True)
+            queryset = queryset.filter(is_active=True)
 
         if category := params.get('category'):
             queryset = queryset.filter(category=category)
@@ -77,6 +82,16 @@ class MemberViewSet(viewsets.ModelViewSet):
         roles = [{'value': r.value, 'label': r.label, 'category': ROLE_CATEGORY[r].value} for r in Role]
         return Response({'counts': counts, 'roles': roles})
 
+    @action(detail=False, methods=['get'], permission_classes=[AllowAny], pagination_class=None)
+    def leadership(self, request):
+        """The first active member in each leadership role, in LEADERSHIP_ROLES order. Missing roles are skipped."""
+        active = Member.objects.filter(is_active=True, role__in=LEADERSHIP_ROLES).order_by('order', 'id')
+        first_by_role = {}
+        for member in active:
+            first_by_role.setdefault(member.role, member)
+        leaders = [first_by_role[role] for role in LEADERSHIP_ROLES if role in first_by_role]
+        return Response(self.get_serializer(leaders, many=True).data)
+
     @action(detail=False, methods=['post'], permission_classes=[IsAdminUser])
     def reorder(self, request):
         """Put the given members in the given order, reusing the positions they already hold."""
@@ -86,7 +101,7 @@ class MemberViewSet(viewsets.ModelViewSet):
 
         with transaction.atomic():
             members = {m.id: m for m in Member.objects.select_for_update().filter(id__in=ids)}
-            if len(members) != len(set(ids)):
+            if len(set(ids)) != len(ids) or len(members) != len(ids):
                 return Response({'ids': ['Unknown or duplicate member ids.']}, status=status.HTTP_400_BAD_REQUEST)
             positions = sorted(m.order for m in members.values())
             for member_id, position in zip(ids, positions):
