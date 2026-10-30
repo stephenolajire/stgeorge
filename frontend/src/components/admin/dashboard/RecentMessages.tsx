@@ -9,6 +9,7 @@ export default function RecentMessages({ messages }: { messages: RecentMessage[]
   return (
     <div className="border-t border-line pt-2">
       <SectionHeader title="Recent Messages" icon={Mail} viewAllPath={ADMIN_PATHS.messages} />
+      {messages.length === 0 && <p className="py-4 text-center text-sm text-muted">No messages yet.</p>}
       <ul className="-mt-1.5 divide-y divide-line">
         {messages.map((message) => (
           <li key={message.id} className="flex items-center gap-4 py-1.25">

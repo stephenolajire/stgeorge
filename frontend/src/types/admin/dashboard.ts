@@ -20,8 +20,8 @@ export interface VisitorPoint {
 export interface OverviewMetric extends IconTone {
   label: string
   value: string
-  /** Percentage change vs the previous period. */
-  change: number
+  /** Percentage change vs the previous period; null when there is nothing to compare with. */
+  change: number | null
 }
 
 export interface QuickAction extends IconTone {
@@ -38,12 +38,12 @@ export interface RecentMessage {
   isRead: boolean
 }
 
-export type EventStatus = 'upcoming' | 'ongoing' | 'past'
+export type EventStatus = 'today' | 'upcoming'
 
 export interface DashboardEvent {
   id: number
   title: string
-  /** ISO date-time */
+  /** ISO date-time with the parish's offset */
   startsAt: string
   venue: string
   status: EventStatus
@@ -67,13 +67,57 @@ export interface GalleryPhoto {
   imageUrl?: string
 }
 
-export interface DashboardData {
-  stats: DashboardStat[]
-  visitors: VisitorPoint[]
-  overviewMetrics: OverviewMetric[]
-  quickActions: QuickAction[]
+/** Counts and latest items from GET /api/dashboard/. */
+export interface DashboardSummary {
+  counts: {
+    news: number
+    newsThisMonth: number
+    upcomingEvents: number
+    eventsThisMonth: number
+    photos: number
+    photosThisMonth: number
+    activeGroups: number
+    messages: number
+    unreadMessages: number
+  }
   recentMessages: RecentMessage[]
   upcomingEvents: DashboardEvent[]
   recentNews: DashboardNews[]
   gallery: GalleryPhoto[]
+}
+
+/** Website visitors from GET /api/analytics/overview/. */
+export interface VisitorOverview {
+  series: VisitorPoint[]
+  totals: VisitorTotals
+  changes: Record<keyof VisitorTotals, number | null>
+}
+
+export interface VisitorTotals {
+  views: number
+  visitors: number
+  avgSessionSeconds: number
+  mobilePercent: number
+}
+
+// ---- API shapes (snake_case) ----
+
+export interface DashboardSummaryApi {
+  stats: {
+    news: { total: number; this_month: number }
+    events: { upcoming: number; this_month: number }
+    photos: { total: number; this_month: number }
+    groups: { active: number }
+    messages: { total: number; unread: number }
+  }
+  recent_messages: { id: number; name: string; subject: string; created_at: string; is_read: boolean }[]
+  upcoming_events: { id: number; title: string; starts_at: string; location: string; category: string }[]
+  recent_news: { id: number; title: string; published_on: string; is_published: boolean; image: string | null }[]
+  gallery: { id: number; title: string; image: string | null }[]
+}
+
+export interface VisitorOverviewApi {
+  series: VisitorPoint[]
+  totals: { views: number; visitors: number; avg_session_seconds: number; mobile_percent: number }
+  changes: { views: number | null; visitors: number | null; avg_session_seconds: number | null; mobile_percent: number | null }
 }

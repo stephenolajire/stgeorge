@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/', include('news_events.urls')),
     path('api/', include('home.urls')),
     path('api/', include('projects.urls')),
+    path('api/', include('dashboard.urls')),
 ]
 
 if settings.DEBUG:

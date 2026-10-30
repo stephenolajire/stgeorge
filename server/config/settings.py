@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'news_events',
     'home',
     'projects',
+    'dashboard',
     'realtime',
 ]
 
@@ -199,6 +200,8 @@ REST_FRAMEWORK = {
         'contact': '5/hour',
         # Newsletter sign-ups per visitor.
         'subscribe': '5/hour',
+        # Page views reported by the public website, per visitor.
+        'visit': '60/minute',
     },
 }
 

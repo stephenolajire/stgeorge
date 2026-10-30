@@ -1,10 +1,12 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import { useTrackVisit } from '../../../hooks/public/useTrackVisit'
 import PublicFooter from './PublicFooter'
 import PublicHeader from './PublicHeader'
 
 export default function PublicLayout() {
   const { pathname } = useLocation()
+  useTrackVisit(pathname)
 
   // Start each page at the top.
   useEffect(() => {

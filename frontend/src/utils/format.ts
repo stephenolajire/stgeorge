@@ -25,15 +25,6 @@ export function formatTime(iso: string): string {
   return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(new Date(iso))
 }
 
-/** { day: "08", month: "NOV" } */
-export function formatDayMonth(iso: string): { day: string; month: string } {
-  const date = new Date(iso)
-  return {
-    day: String(date.getDate()).padStart(2, '0'),
-    month: date.toLocaleString('en-US', { month: 'short' }).toUpperCase(),
-  }
-}
-
 /** "2 hours ago", "1 day ago" */
 export function formatRelative(iso: string, now: Date = new Date()): string {
   const seconds = Math.round((new Date(iso).getTime() - now.getTime()) / 1000)

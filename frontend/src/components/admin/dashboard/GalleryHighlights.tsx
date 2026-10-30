@@ -7,6 +7,7 @@ import SectionCard from '../common/SectionCard'
 export default function GalleryHighlights({ photos }: { photos: GalleryPhoto[] }) {
   return (
     <SectionCard title="Gallery Highlights" icon={Images} viewAllPath={ADMIN_PATHS.gallery}>
+      {photos.length === 0 && <p className="py-6 text-center text-sm text-muted">No photos yet.</p>}
       <div className="grid grid-cols-3 gap-2">
         {photos.map((photo) => (
           <ImageTile key={photo.id} src={photo.imageUrl} alt={photo.title} className="aspect-3/2 w-full" />
