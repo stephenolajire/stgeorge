@@ -52,6 +52,10 @@ export const publicRoutes: RouteObject = {
       lazy: async () => ({ Component: (await import('../pages/publicpage/Sacraments')).default }),
     },
     {
+      path: PUBLIC_PATHS.newsEvents,
+      lazy: async () => ({ Component: (await import('../pages/publicpage/NewsEvents')).default }),
+    },
+    {
       path: PUBLIC_PATHS.parishLife,
       lazy: async () => ({ Component: (await import('../pages/publicpage/ParishLife')).default }),
     },
