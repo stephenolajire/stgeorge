@@ -29,6 +29,7 @@ urlpatterns = [
     path('api/', include('sacraments.urls')),
     path('api/', include('gallery.urls')),
     path('api/', include('contact.urls')),
+    path('api/', include('news_events.urls')),
 ]
 
 if settings.DEBUG:

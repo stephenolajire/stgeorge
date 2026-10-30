@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'sacraments',
     'gallery',
     'contact',
+    'news_events',
     'realtime',
 ]
 
@@ -124,7 +125,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+# The parish's time: event times are entered and shown in Nigeria time.
+TIME_ZONE = 'Africa/Lagos'
 
 USE_I18N = True
 

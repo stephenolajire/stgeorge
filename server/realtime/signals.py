@@ -24,6 +24,7 @@ def connect_signals():
     from clergy_staff.models import Member
     from contact.models import FAQ, ContactMessage, ContactPage
     from gallery.models import GalleryPage, Photo
+    from news_events.models import Event, NewsEventsPage, NewsPost
     from parish_groups.models import ParishGroup
     from parish_life.models import Activity, Highlight, ParishLifePage
     from sacraments.models import Sacrament, SacramentFeature, SacramentsPage
@@ -40,6 +41,9 @@ def connect_signals():
     watch(SacramentFeature, 'sacraments')
     watch(Photo, 'gallery')
     watch(GalleryPage, 'gallery')
+    watch(Event, 'news-events')
+    watch(NewsPost, 'news-events')
+    watch(NewsEventsPage, 'news-events')
     watch(ContactPage, 'contact')
     watch(FAQ, 'contact')
     # Messages only matter to the admin; the frontend reloads only admin data for this topic.
