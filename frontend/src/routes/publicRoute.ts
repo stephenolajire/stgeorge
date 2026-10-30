@@ -11,6 +11,8 @@ export const PUBLIC_PATHS = {
   gallery: '/gallery',
   contact: '/contact',
   massTimes: '/mass-times',
+  privacy: '/privacy-policy',
+  terms: '/terms-of-use',
 } as const
 
 export const publicNavItems = [
@@ -32,6 +34,26 @@ export const publicRoutes: RouteObject = {
     {
       path: PUBLIC_PATHS.about,
       lazy: async () => ({ Component: (await import('../pages/publicpage/About')).default }),
+    },
+    {
+      path: PUBLIC_PATHS.contact,
+      lazy: async () => ({ Component: (await import('../pages/publicpage/Contact')).default }),
+    },
+    {
+      path: PUBLIC_PATHS.gallery,
+      lazy: async () => ({ Component: (await import('../pages/publicpage/Gallery')).default }),
+    },
+    {
+      path: `${PUBLIC_PATHS.gallery}/:category`,
+      lazy: async () => ({ Component: (await import('../pages/publicpage/GalleryCategory')).default }),
+    },
+    {
+      path: PUBLIC_PATHS.sacraments,
+      lazy: async () => ({ Component: (await import('../pages/publicpage/Sacraments')).default }),
+    },
+    {
+      path: PUBLIC_PATHS.parishLife,
+      lazy: async () => ({ Component: (await import('../pages/publicpage/ParishLife')).default }),
     },
     // Pages not built yet (including Home for now).
     {

@@ -2,7 +2,6 @@ import { Calendar, Compass, HandHeart, Heart, Save, Users } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { toast } from 'react-toastify'
 import { useUpdateAboutPage } from '../../../hooks/admin/aboutHook'
-import { ADMIN_PATHS } from '../../../routes/adminRoute'
 import { aboutStatsMock } from '../../../services/mock/adminAbout'
 import type { AboutPageContent, KeyStatistic } from '../../../types/admin'
 import { getErrorMessage } from '../../../utils/apiError'
@@ -56,7 +55,7 @@ export default function AboutPageForm({ initialContent }: { initialContent: Abou
       <PageHeader
         title="About Page"
         subtitle="Manage the content for your parish's About page."
-        breadcrumb={[{ label: 'Content', path: ADMIN_PATHS.pages }, { label: 'About' }]}
+        breadcrumb={[{ label: 'Content' }, { label: 'About' }]}
         actions={
           <Button onClick={handleSave} disabled={saving}>
             <Save className="size-4" /> {saving ? 'Saving...' : 'Save Changes'}

@@ -1,0 +1,6 @@
+{% extends "emails/base.html" %}
+{% block preheader %}Test email{% endblock %}
+{% block content %}
+<h1 style="margin:0 0 12px;font-family:Georgia,'Times New Roman',serif;font-size:20px;color:#0f2a5e;">Email is working</h1>
+<p style="margin:0;">This test was sent from the {{ church_name }} website. Contact-form alerts and replies to visitors will look like this.</p>
+{% endblock %}

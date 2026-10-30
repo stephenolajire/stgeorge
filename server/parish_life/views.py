@@ -1,57 +1,52 @@
-from django.db import transaction
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAdminUser
-from rest_framework.response import Response
+from rest_framework import mixins, viewsets
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 
 from core.permissions import IsAdminOrReadOnly
+from core.views import DeleteImagesMixin, ReorderMixin
 
-from .models import Section
-from .serializers import ReorderSerializer, SectionSerializer
+from .models import Activity, Highlight, ParishLifePage
+from .serializers import ActivitySerializer, HighlightSerializer, ParishLifePageSerializer
 
 
-class SectionViewSet(viewsets.ModelViewSet):
+class ParishLifePageViewSet(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, viewsets.GenericViewSet):
     """
-    Parish Life page sections, in display order.
+    The Parish Life page: a single record, like the About page.
 
-    GET    /api/parish-life/            all sections (the public only gets published ones)
-    POST   /api/parish-life/            create (staff only; send the image as multipart form data)
-    GET    /api/parish-life/<id>/       one section
-    PATCH  /api/parish-life/<id>/       update (staff only; remove_image=true clears the image)
-    DELETE /api/parish-life/<id>/       delete (staff only)
-    POST   /api/parish-life/reorder/    {ids: [...]} in the new order (staff only)
+    GET   /api/parish-life/   page text and images, with its highlights and activities (public sees published only)
+    PATCH /api/parish-life/   update text/images (staff only; multipart for images, remove_<image>=true clears one)
     """
 
-    serializer_class = SectionSerializer
+    serializer_class = ParishLifePageSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
+    http_method_names = ['get', 'patch', 'head', 'options']
+
+    def get_object(self):
+        obj = ParishLifePage.load()
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
+class HighlightViewSet(ReorderMixin, viewsets.ModelViewSet):
+    """Highlight cards. /api/parish-life/highlights/ (+ /reorder/). Staff only for changes."""
+
+    queryset = Highlight.objects.all()
+    serializer_class = HighlightSerializer
+    permission_classes = [IsAdminOrReadOnly]
+    pagination_class = None
+    http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
+
+
+class ActivityViewSet(ReorderMixin, DeleteImagesMixin, viewsets.ModelViewSet):
+    """Activity cards. /api/parish-life/activities/ (+ /reorder/). The public only sees published ones."""
+
+    serializer_class = ActivitySerializer
     permission_classes = [IsAdminOrReadOnly]
     pagination_class = None
     http_method_names = ['get', 'post', 'patch', 'delete', 'head', 'options']
 
     def get_queryset(self):
-        queryset = Section.objects.all()
+        queryset = Activity.objects.all()
         if not self.request.user.is_staff:
             queryset = queryset.filter(is_published=True)
         return queryset
-
-    def perform_destroy(self, instance):
-        image = instance.image.name if instance.image else None
-        instance.delete()
-        if image:
-            Section._meta.get_field('image').storage.delete(image)
-
-    @action(detail=False, methods=['post'], permission_classes=[IsAdminUser])
-    def reorder(self, request):
-        """Put the given sections in the given order, reusing the positions they already hold."""
-        serializer = ReorderSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        ids = serializer.validated_data['ids']
-
-        with transaction.atomic():
-            sections = {s.id: s for s in Section.objects.select_for_update().filter(id__in=ids)}
-            if len(set(ids)) != len(ids) or len(sections) != len(ids):
-                return Response({'ids': ['Unknown or duplicate section ids.']}, status=status.HTTP_400_BAD_REQUEST)
-            positions = sorted(s.order for s in sections.values())
-            for section_id, position in zip(ids, positions):
-                sections[section_id].order = position
-            Section.objects.bulk_update(sections.values(), ['order'])
-        return Response(status=status.HTTP_204_NO_CONTENT)

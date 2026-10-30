@@ -25,5 +25,20 @@ export interface ChurchInfo {
   diocese: string
   /** Shown as "Learn More About Our Diocese" on the About page; hidden when empty. */
   dioceseWebsite: string
+  /** Short line under the logo in the footer. */
+  tagline: string
+  /** Footer contact details. Empty values are hidden. */
+  contact: {
+    address: string
+    phone: string
+    email: string
+    hours: string
+  }
+  /** Social media page links. Empty values are hidden. */
+  social: {
+    facebook: string
+    youtube: string
+    instagram: string
+  }
   logoUrl?: string
 }

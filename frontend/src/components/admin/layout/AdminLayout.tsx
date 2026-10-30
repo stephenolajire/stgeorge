@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Outlet } from 'react-router-dom'
-import { navBadgesMock, unreadNotificationsMock } from '../../../services/mock/adminSession'
+import { unreadNotificationsMock } from '../../../services/mock/adminSession'
 import { CHURCH } from '../../../utils/siteConfig'
 import RequireAdmin from '../auth/RequireAdmin'
 import Sidebar from './Sidebar'
@@ -25,7 +25,6 @@ export default function AdminLayout() {
         <div className="min-h-screen bg-page">
           <Sidebar
             church={CHURCH}
-            badges={navBadgesMock}
             mobileOpen={mobileOpen}
             desktopCollapsed={desktopCollapsed}
             onClose={() => setMobileOpen(false)}

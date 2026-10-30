@@ -33,6 +33,8 @@ ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').sp
 # Application definition
 
 INSTALLED_APPS = [
+    # Must be first: makes `runserver` serve websockets too.
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,6 +48,11 @@ INSTALLED_APPS = [
     'about',
     'clergy_staff',
     'parish_life',
+    'parish_groups',
+    'sacraments',
+    'gallery',
+    'contact',
+    'realtime',
 ]
 
 MIDDLEWARE = [
@@ -61,10 +68,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'config.urls'
 
+ASGI_APPLICATION = 'config.asgi.application'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # Project-wide templates, e.g. templates/emails/.
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -135,17 +145,40 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
+# Emails go through ZeptoMail when ZEPTOMAIL_API_KEY is set; otherwise they are printed to the console
+# (handy in development). See core/mail_backends.py.
+ZEPTOMAIL_API_KEY = os.environ.get('ZEPTOMAIL_API_KEY', '')
 MAILERS = {
-    'default': {
-        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
-    },
+    'default': (
+        {
+            'BACKEND': 'core.mail_backends.ZeptoMailBackend',
+            'OPTIONS': {
+                'api_key': ZEPTOMAIL_API_KEY,
+                # Use your account's region, e.g. https://api.zeptomail.eu/v1.1/email
+                'api_url': os.environ.get('ZEPTOMAIL_API_URL', 'https://api.zeptomail.com/v1.1/email'),
+            },
+        }
+        if ZEPTOMAIL_API_KEY
+        else {'BACKEND': 'django.core.mail.backends.console.EmailBackend'}
+    ),
 }
+# Must be an address on a domain verified in ZeptoMail.
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'St. George Catholic Church <noreply@example.com>')
+CHURCH_NAME = 'St. George Catholic Church'
+# Where new contact-form messages are announced (empty = no notification email).
+CONTACT_NOTIFY_EMAIL = os.environ.get('CONTACT_NOTIFY_EMAIL', '')
+# Where visitors' replies to our emails go (empty = the From address).
+CONTACT_REPLY_TO = os.environ.get('CONTACT_REPLY_TO', '')
+# The public website, for links in emails.
+FRONTEND_URL = os.environ.get('FRONTEND_URL', 'http://localhost:5173').rstrip('/')
 
 CORS_ALLOWED_ORIGINS = os.environ.get(
     'CORS_ALLOWED_ORIGINS', 'http://localhost:5173'
 ).split(',')
 # The admin frontend sends the auth cookies with its requests.
 CORS_ALLOW_CREDENTIALS = True
+# Let the frontend read the file name of downloads such as the messages export.
+CORS_EXPOSE_HEADERS = ['Content-Disposition']
 
 # Users sign in with their email address (see the user app).
 AUTH_USER_MODEL = 'user.User'
@@ -158,6 +191,8 @@ REST_FRAMEWORK = {
     'DEFAULT_THROTTLE_RATES': {
         # Failed and successful login attempts per client IP.
         'login': '10/minute',
+        # Contact form messages per visitor.
+        'contact': '5/hour',
     },
 }
 
@@ -176,3 +211,21 @@ AUTH_COOKIE_SAMESITE = 'Lax'
 # Set to the parent domain (e.g. ".stgeorgeofatedo.org") if the API and the
 # frontend are on different subdomains. Leave empty for localhost.
 AUTH_COOKIE_DOMAIN = os.environ.get('AUTH_COOKIE_DOMAIN') or None
+
+# Live updates (realtime app). Redis carries messages between server processes.
+# Without REDIS_URL an in-memory layer is used, which only works with a single process (fine for development).
+REDIS_URL = os.environ.get('REDIS_URL')
+CHANNEL_LAYERS = {
+    'default': (
+        {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                # channels_redis waits on Redis for 5 seconds at a time; redis-py 8 gives up reading
+                # after 5 seconds by default, so every idle connection crashed. Allow longer reads.
+                'hosts': [{'address': REDIS_URL, 'socket_timeout': 15}],
+            },
+        }
+        if REDIS_URL
+        else {'BACKEND': 'channels.layers.InMemoryChannelLayer'}
+    )
+}

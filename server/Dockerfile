@@ -20,4 +20,5 @@ USER app
 
 EXPOSE 8000
 
-CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000"]
+# Daphne serves both normal HTTP requests and the live-update websockets.
+CMD ["daphne", "--bind", "0.0.0.0", "--port", "8000", "config.asgi:application"]

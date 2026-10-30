@@ -1,0 +1,12 @@
+Dear {{ message.name }},
+
+{{ body }}
+
+God bless you,
+{{ church_name }}
+
+---
+Your message ({{ message.get_subject_display }}, {{ message.created_at|date:"j F Y" }}):
+{{ message.message }}
+
+{{ church_name }}{% if contact.address %} · {{ contact.address }}{% endif %}{% if contact.phone %} · {{ contact.phone }}{% endif %}{% if contact.email %} · {{ contact.email }}{% endif %}

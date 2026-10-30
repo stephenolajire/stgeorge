@@ -1,10 +1,10 @@
-import { Eye, GripVertical, Mail, Pencil, Phone, Trash2 } from 'lucide-react'
+import { ArrowDown, ArrowUp, CircleCheck, CircleOff, Eye, GripVertical, Mail, Pencil, Phone, Trash2 } from 'lucide-react'
 import type { DragEvent } from 'react'
 import type { Member } from '../../../types/admin'
 import { CATEGORY_BADGE } from '../../../utils/clergy'
 import Avatar from '../common/Avatar'
 import StatusBadge from '../common/StatusBadge'
-import RowMoreMenu from './RowMoreMenu'
+import MoreMenu from '../common/MoreMenu'
 
 interface MemberRowProps {
   member: Member
@@ -87,13 +87,14 @@ export default function MemberRow(props: MemberRowProps) {
           >
             <Trash2 className="size-4" />
           </button>
-          <RowMoreMenu
-            isActive={member.isActive}
-            canMoveUp={!props.isFirst}
-            canMoveDown={!props.isLast}
-            onMoveUp={props.onMoveUp}
-            onMoveDown={props.onMoveDown}
-            onToggleActive={props.onToggleActive}
+          <MoreMenu
+            items={[
+              { label: 'Move up', icon: ArrowUp, onClick: props.onMoveUp, disabled: props.isFirst },
+              { label: 'Move down', icon: ArrowDown, onClick: props.onMoveDown, disabled: props.isLast },
+              member.isActive
+                ? { label: 'Mark as inactive', icon: CircleOff, onClick: props.onToggleActive }
+                : { label: 'Mark as active', icon: CircleCheck, onClick: props.onToggleActive },
+            ]}
           />
         </div>
       </td>

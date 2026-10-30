@@ -1,10 +1,7 @@
 """
-ASGI config for config project.
+ASGI entry point: normal HTTP requests go to Django, websockets go to Channels.
 
-It exposes the ASGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.1/howto/deployment/asgi/
+https://channels.readthedocs.io/en/stable/topics/routing.html
 """
 
 import os
@@ -13,4 +10,19 @@ from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
-application = get_asgi_application()
+# Load Django (and its apps) before importing anything that uses models.
+django_asgi_app = get_asgi_application()
+
+from channels.routing import ProtocolTypeRouter, URLRouter  # noqa: E402
+from channels.security.websocket import OriginValidator  # noqa: E402
+from django.conf import settings  # noqa: E402
+
+from realtime.routing import websocket_urlpatterns  # noqa: E402
+
+application = ProtocolTypeRouter(
+    {
+        'http': django_asgi_app,
+        # Only our own frontend (the CORS origins) may open the websocket.
+        'websocket': OriginValidator(URLRouter(websocket_urlpatterns), settings.CORS_ALLOWED_ORIGINS),
+    }
+)

@@ -1,7 +1,2 @@
-import type { NavBadges } from '../../types/admin'
-
-// Placeholder counts until messages and notifications have APIs.
-
-export const navBadgesMock: NavBadges = { unreadMessages: 3 }
-
+// Placeholder until notifications have an API.
 export const unreadNotificationsMock = 3

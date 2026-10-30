@@ -5,6 +5,13 @@ export type Tone = 'info' | 'success' | 'violet' | 'warning' | 'danger' | 'neutr
 
 export type Trend = 'up' | 'down'
 
+/** One choice in a coloured status pill, e.g. Published / Draft. */
+export interface StatusOption {
+  value: string
+  label: string
+  tone: Tone
+}
+
 export interface IconTone {
   icon: LucideIcon
   tone: Tone

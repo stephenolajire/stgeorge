@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny, IsAdminUser
 from rest_framework.response import Response
 
 from core.permissions import IsAdminOrReadOnly
+from core.signals import bulk_changed
 
 from .models import ROLE_CATEGORY, Member, Role
 
@@ -107,4 +108,5 @@ class MemberViewSet(viewsets.ModelViewSet):
             for member_id, position in zip(ids, positions):
                 members[member_id].order = position
             Member.objects.bulk_update(members.values(), ['order'])
+            transaction.on_commit(lambda: bulk_changed.send(sender=Member))
         return Response(status=status.HTTP_204_NO_CONTENT)

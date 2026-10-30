@@ -163,6 +163,16 @@
   }
 }
 
+/* Slideshow photo fade-in */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @layer base {
   html {
     font-family: var(--font-sans);

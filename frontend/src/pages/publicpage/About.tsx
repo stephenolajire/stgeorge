@@ -1,12 +1,14 @@
-import AboutHero from '../../components/public/about/AboutHero'
 import HistorySection from '../../components/public/about/HistorySection'
-import JoinCommunity from '../../components/public/about/JoinCommunity'
 import MissionValues from '../../components/public/about/MissionValues'
 import ParishLeadership from '../../components/public/about/ParishLeadership'
 import WhoWeAre from '../../components/public/about/WhoWeAre'
+import CallToAction from '../../components/public/CallToAction'
+import PageHero from '../../components/public/PageHero'
 import { useAboutContent, useParishLeadership } from '../../hooks/public/aboutHook'
 import { usePageTitle } from '../../hooks/usePageTitle'
 import PageLoader from '../../components/admin/common/PageLoader'
+import { PUBLIC_PATHS } from '../../routes/publicRoute'
+import { JOIN_CTA } from '../../utils/aboutContent'
 
 export default function About() {
   usePageTitle('About')
@@ -27,7 +29,7 @@ export default function About() {
 
   return (
     <>
-      <AboutHero {...content.hero} />
+      <PageHero title={content.hero.title} subtitle={content.hero.subtitle} image={content.hero.image} crumb="About" />
       <div className="space-y-5 py-6">
         <WhoWeAre {...content.mainContent} />
         <MissionValues
@@ -39,7 +41,7 @@ export default function About() {
         <HistorySection {...content.history} fallbackImage={content.hero.image} />
       </div>
       <ParishLeadership leaders={leaders} diocese={content.parishInfo.diocese} />
-      <JoinCommunity image={content.hero.image} />
+      <CallToAction {...JOIN_CTA} buttonLabel="Get Involved" to={PUBLIC_PATHS.contact} image={content.hero.image} />
     </>
   )
 }

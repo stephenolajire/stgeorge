@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
+import PublicFooter from './PublicFooter'
 import PublicHeader from './PublicHeader'
 
 export default function PublicLayout() {
@@ -16,6 +17,7 @@ export default function PublicLayout() {
       <main>
         <Outlet />
       </main>
+      <PublicFooter />
     </div>
   )
 }

@@ -1,0 +1,13 @@
+{% extends "emails/base.html" %}
+{% block preheader %}A reply to your message{% endblock %}
+{% block content %}
+<p style="margin:0 0 16px;">Dear {{ message.name }},</p>
+<div style="white-space:pre-line;margin:0 0 24px;">{{ body }}</div>
+<p style="margin:0 0 4px;">God bless you,</p>
+<p style="margin:0 0 28px;"><strong>{{ church_name }}</strong></p>
+
+<div style="border-top:1px solid #edf0f5;padding-top:16px;font-size:13px;color:#69728b;">
+  <p style="margin:0 0 6px;">Your message ({{ message.get_subject_display }}, {{ message.created_at|date:"j F Y" }}):</p>
+  <div style="border-left:3px solid #f5bd3b;padding-left:12px;white-space:pre-line;">{{ message.message }}</div>
+</div>
+{% endblock %}

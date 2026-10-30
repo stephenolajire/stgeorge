@@ -1,4 +1,5 @@
 import { X } from 'lucide-react'
+import { useMessageCounts } from '../../../hooks/admin/contactHook'
 import { adminNavSections } from '../../../routes/adminRoute'
 import type { ChurchInfo, NavBadges } from '../../../types/admin'
 import SidebarBrand from './SidebarBrand'
@@ -6,13 +7,16 @@ import SidebarNavItem from './SidebarNavItem'
 
 interface SidebarProps {
   church: ChurchInfo
-  badges: NavBadges
   mobileOpen: boolean
   desktopCollapsed: boolean
   onClose: () => void
 }
 
-export default function Sidebar({ church, badges, mobileOpen, desktopCollapsed, onClose }: SidebarProps) {
+export default function Sidebar({ church, mobileOpen, desktopCollapsed, onClose }: SidebarProps) {
+  // Live counts shown next to menu items. The sidebar only renders for a signed-in admin.
+  const { data: counts } = useMessageCounts()
+  const badges: NavBadges = { unreadMessages: counts?.unread ?? 0 }
+
   return (
     <>
       {mobileOpen && (

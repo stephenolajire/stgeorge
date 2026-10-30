@@ -1,4 +1,4 @@
-import { Calendar, Clock, Eye, File, FileText, Image, Mail, Smartphone, Users } from 'lucide-react'
+import { Calendar, Clock, Eye, FileText, Image, Mail, Smartphone, Users } from 'lucide-react'
 import { ADMIN_PATHS } from '../../routes/adminRoute'
 import type { DashboardData, VisitorPoint } from '../../types/admin'
 
@@ -38,7 +38,6 @@ export const adminDashboardMock: DashboardData = {
     { label: 'Create Event', path: ADMIN_PATHS.newsEvents, icon: Calendar, tone: 'success' },
     { label: 'Upload Photos', path: ADMIN_PATHS.gallery, icon: Image, tone: 'violet' },
     { label: 'Update Mass Times', path: ADMIN_PATHS.massTimes, icon: Clock, tone: 'warning' },
-    { label: 'Manage Pages', path: ADMIN_PATHS.pages, icon: File, tone: 'neutral' },
     { label: 'View Messages', path: ADMIN_PATHS.messages, icon: Mail, tone: 'danger', badge: 3 },
   ],
   recentMessages: [
